@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PookalBot Dashboard</title>
-  <link rel="stylesheet" href="/static/style.css?v=4.0" />
-  <link rel="stylesheet" href="style.css?v=4.0" />
+  <link rel="stylesheet" href="/static/style.css?v=5.0" />
+  <link rel="stylesheet" href="style.css?v=5.0" />
 </head>
 <body>
 
@@ -40,6 +40,10 @@
       <a href="#" class="nav-item" data-section="designer">
         <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12h8M12 8v8"/></svg>
         AI Designer
+      </a>
+      <a href="#" class="nav-item" data-section="simulation">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Simulation Arena
       </a>
       <a href="#" class="nav-item" data-section="path">
         <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6l9-3 9 3M3 18l9 3 9-3"/></svg>
@@ -420,6 +424,92 @@
 
           <p id="camError" class="cam-error hidden" role="alert" aria-live="polite"></p>
         </section>
+
+        <!-- ── DEDICATED ROBOT SIMULATION ARENA ────────────────── -->
+        <section class="card simulation-section-card hidden" id="simulationSection" aria-labelledby="simSectionTitle">
+          <div class="sim-section-header">
+            <div>
+              <h2 id="simSectionTitle" class="card-title">
+                <span class="title-icon" aria-hidden="true">🎮</span> Autonomous Robot Simulation Arena
+              </h2>
+              <p class="card-desc">Simulates exact closed-loop differential drive waypoints with dynamic chalk trail accumulation.</p>
+            </div>
+            <span id="simStateBadge" class="sim-badge">Ready</span>
+          </div>
+
+          <!-- Quick presets for judge demo -->
+          <div class="sim-presets-bar">
+            <span class="control-label" style="margin: 0; font-size: 0.76rem; font-weight: 700; color: var(--clr-gold);">⭐ Quick Demo Presets:</span>
+            <button type="button" class="sim-preset-btn" data-preset="lotus">🪔 8-Fold Lotus</button>
+            <button type="button" class="sim-preset-btn" data-preset="mandala">🎭 Kathakali Mandala</button>
+            <button type="button" class="sim-preset-btn" data-preset="pooram">👑 12-Ring Pooram</button>
+            <button type="button" class="sim-preset-btn" data-preset="star">⭐ Starburst</button>
+          </div>
+
+          <!-- Large Centered Simulation Arena -->
+          <div class="sim-arena-wrap">
+            <canvas id="simCanvas" class="sim-arena-canvas" width="560" height="560"></canvas>
+            <div class="sim-arena-legend">
+              <span><span class="legend-dot green"></span> Pen Down (Chalk Trail)</span>
+              <span><span class="legend-dot dashed"></span> Pen Up (Repositioning)</span>
+              <span><span class="legend-dot robot"></span> PookalBot Mobile Chassis</span>
+            </div>
+          </div>
+
+          <!-- Telemetry & Speed Dashboard -->
+          <div class="sim-dashboard">
+            <div class="sim-progress-bar">
+              <div id="simProgressFill" class="sim-progress-fill" style="width: 0%;"></div>
+            </div>
+
+            <div class="sim-telemetry-grid">
+              <div class="sim-telem-item">
+                <span class="sim-telem-lbl">Floor Position</span>
+                <span class="sim-telem-val" id="simTelemPos">(0.0, 0.0) cm</span>
+              </div>
+              <div class="sim-telem-item">
+                <span class="sim-telem-lbl">Heading Angle</span>
+                <span class="sim-telem-val" id="simTelemHeading">0°</span>
+              </div>
+              <div class="sim-telem-item">
+                <span class="sim-telem-lbl">Chalk Dispenser</span>
+                <span class="sim-telem-val" id="simTelemPen">UP (Travel)</span>
+              </div>
+              <div class="sim-telem-item">
+                <span class="sim-telem-lbl">Waypoints Traced</span>
+                <span class="sim-telem-val" id="simTelemWp">0 / 0 (0%)</span>
+              </div>
+            </div>
+
+            <div class="sim-controls-row">
+              <div class="sim-speed-row">
+                <span class="sim-speed-lbl">Speed Multiplier:</span>
+                <div class="sim-speed-btns">
+                  <button type="button" class="sim-speed-btn" data-speed="1">1×</button>
+                  <button type="button" class="sim-speed-btn" data-speed="2">2×</button>
+                  <button type="button" class="sim-speed-btn active" data-speed="5">5×</button>
+                  <button type="button" class="sim-speed-btn" data-speed="10">10×</button>
+                  <button type="button" class="sim-speed-btn" data-speed="25">25×</button>
+                </div>
+              </div>
+
+              <div class="sim-actions">
+                <button id="btnSimStart" class="btn btn-generate btn-sm" style="flex: 2;">
+                  <span>▶ Start Simulation</span>
+                </button>
+                <button id="btnSimPause" class="btn btn-outline btn-sm" style="flex: 1;" disabled>
+                  <span>⏸ Pause</span>
+                </button>
+                <button id="btnSimReset" class="btn btn-outline btn-sm" style="flex: 1;">
+                  <span>↻ Reset</span>
+                </button>
+              </div>
+            </div>
+
+            <p id="simStatusMsg" class="sim-status-msg"></p>
+          </div>
+        </section>
+
         <!-- Workflow strip -->
         <div class="workflow-card">
           <div class="workflow-robot" aria-hidden="true">
@@ -528,9 +618,8 @@
             <span id="previewInfoText">Select a design to preview it here.</span>
           </div>
 
-          <!-- TODO: Send selected SVG to /api/generate-path -->
           <button id="continueBtn2" class="btn btn-accent btn-full hidden">
-            Continue to Path Preview →
+            Generate Path & Waypoints →
           </button>
         </div>
       </aside>
@@ -542,6 +631,6 @@
     </footer>
   </div>
 
-  <script src="/static/app.js?v=4.0"></script>
+  <script src="/static/app.js?v=5.0"></script>
 </body>
 </html>

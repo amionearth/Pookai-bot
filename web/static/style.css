@@ -1,4 +1,4 @@
-﻿/* ── CSS Variables ─────────────────────────────────────────────────── */
+/* ── CSS Variables ─────────────────────────────────────────────────── */
 :root {
   /* Light Onam palette */
   --clr-bg:          #fdf6ec;
@@ -657,6 +657,232 @@ body {
 }
 
 /* ── PAGE SECTIONS (show/hide) ──────────────────────────────────────── */
-.page-section { display: none; }
-.page-section.active { display: block; }
-/* dashboard uses col-left children directly — handled via JS toggling .hidden */
+/* ── DEDICATED ROBOT SIMULATION ARENA ─────────────────────────────────── */
+.simulation-section-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.sim-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.sim-presets-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  padding: 0.6rem 0.85rem;
+  background: var(--clr-bg-warm);
+  border: 1px solid var(--clr-border-soft);
+  border-radius: var(--radius-md);
+}
+
+.sim-preset-btn {
+  background: var(--clr-card);
+  border: 1px solid var(--clr-border);
+  border-radius: 999px;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--clr-text-mid);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.sim-preset-btn:hover {
+  background: var(--clr-gold-light);
+  border-color: var(--clr-gold);
+  color: var(--clr-gold);
+  transform: translateY(-1px);
+}
+
+.sim-arena-wrap {
+  position: relative;
+  background: radial-gradient(circle at center, #fff9f0 0%, #f7ebdb 70%, #eddac4 100%);
+  border: 2px solid var(--clr-border);
+  border-radius: var(--radius-lg);
+  aspect-ratio: 1;
+  max-width: 580px;
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: inset 0 2px 16px rgba(100, 60, 0, 0.08);
+}
+
+.sim-arena-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.sim-arena-legend {
+  position: absolute;
+  bottom: 10px;
+  left: 12px;
+  right: 12px;
+  display: flex;
+  justify-content: center;
+  gap: 1.2rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--clr-text-muted);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(4px);
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(232, 217, 192, 0.6);
+  pointer-events: none;
+}
+
+.legend-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+.legend-dot.green { background: #2e7d32; }
+.legend-dot.dashed { background: transparent; border: 1.5px dashed #c8860a; }
+.legend-dot.robot { background: #e8403a; }
+
+.sim-dashboard {
+  background: var(--clr-card-alt);
+  border: 1px solid var(--clr-border);
+  padding: 1.1rem;
+  border-radius: var(--radius-md);
+}
+
+.sim-badge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--clr-border-soft);
+  color: var(--clr-text-muted);
+}
+.sim-badge.active {
+  background: var(--clr-green-light);
+  color: var(--clr-green);
+  border: 1px solid #c8e6c9;
+}
+.sim-badge.paused {
+  background: var(--clr-gold-light);
+  color: var(--clr-gold);
+}
+
+.sim-progress-bar {
+  width: 100%;
+  height: 7px;
+  background: var(--clr-border);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 0.85rem;
+}
+
+.sim-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--clr-green), var(--clr-gold));
+  transition: width 0.1s linear;
+}
+
+.sim-telemetry-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.6rem;
+  margin-bottom: 0.9rem;
+}
+
+.sim-telem-item {
+  background: var(--clr-card);
+  border: 1px solid var(--clr-border-soft);
+  border-radius: var(--radius-sm);
+  padding: 0.45rem 0.65rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.sim-telem-lbl {
+  font-size: 0.62rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--clr-text-muted);
+}
+
+.sim-telem-val {
+  font-size: 0.82rem;
+  font-family: "Consolas", monospace;
+  font-weight: 700;
+  color: var(--clr-text);
+  margin-top: 2px;
+}
+
+.sim-controls-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.sim-speed-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.78rem;
+}
+
+.sim-speed-lbl {
+  color: var(--clr-text-muted);
+  font-weight: 600;
+}
+
+.sim-speed-btns {
+  display: flex;
+  gap: 4px;
+}
+
+.sim-speed-btn {
+  background: var(--clr-card);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-sm);
+  padding: 0.25rem 0.6rem;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--clr-text-mid);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.sim-speed-btn:hover {
+  background: var(--clr-gold-light);
+  border-color: var(--clr-gold);
+}
+
+.sim-speed-btn.active {
+  background: var(--clr-gold);
+  color: #fff;
+  border-color: var(--clr-gold);
+}
+
+.sim-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex: 1;
+  justify-content: flex-end;
+}
+
+.sim-status-msg {
+  margin-top: 0.6rem;
+  font-size: 0.78rem;
+  color: var(--clr-green);
+  min-height: 1em;
+}
