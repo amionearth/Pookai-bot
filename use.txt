@@ -1,0 +1,116 @@
+cd ~/mosaic
+source .venv/bin/activate
+
+# Automatically finds and streams kathakaliright (1).gif:
+python pi/stream_gif.py 192.168.10.14
+
+
+ scp -r mosaic/* tinker@192.168.11.237:~/mosaic/
+Complete Step-by-Step Setup Guide
+
+
+[Laptop]  ──(SCP)──>  [Raspberry Pi 5]  ──(UDP 9000: Drive)──>  [ESP32 Robot]
+                             │           ──(TCP 9001: Video)──>  [1.8" TFT]
+                             └──(HTTP 8000: Web UI & Cam)──>  [Browser / Phone]
+Step 1: Flash the ESP32 (Laptop)
+Open 
+esp32/pookalbot_firmware.ino
+ in Arduino IDE.
+Make sure your WiFi credentials at the top match your network:
+cpp
+
+
+const char* WIFI_SSID     = "Tinker Space";
+const char* WIFI_PASSWORD = "123tinkerspace";
+Connect the ESP32 via USB and click Upload (→).
+Open the Serial Monitor (115200 baud). Note the IP address printed:
+text
+
+
+[WiFi] Connected! IP Address: 192.168.10.14
+(The IP also appears on the 1.8" TFT boot screen).
+Step 2: Copy the Project to Raspberry Pi 5 (Laptop PowerShell)
+Open PowerShell on your laptop and sync the project files:
+
+powershell
+
+
+cd "C:\Users\LENOVO\Desktop\project\google hackathon"
+scp -r mosaic/* tinker@raspberrypi.local:~/mosaic/
+(Or use tinker@192.168.10.14 if using static IP).
+
+Step 3: Configure Cloudflare & Launch Everything (Pi 5 Terminal)
+SSH into your Raspberry Pi 5:
+
+bash
+
+
+ssh tinker@raspberrypi.local
+Enter the project folder and activate the Python virtual environment:
+
+bash
+
+
+cd ~/mosaic
+source .venv/bin/activate
+(Optional) Export your Cloudflare Workers AI credentials:
+
+bash
+
+
+export CLOUDFLARE_ACCOUNT_ID="your_cloudflare_account_id"
+export CLOUDFLARE_API_TOKEN="your_cloudflare_api_token"
+(If omitted, it will automatically use the free Pollinations.ai fallback).
+
+Run the Master Launcher (replace with your ESP32's IP):
+
+bash
+
+
+python run_all.py --esp32 192.168.10.14
+Or simply:
+
+bash
+
+
+bash launch.sh 192.168.10.14
+You will see the startup banner:
+
+text
+
+
+=================================================================
+       🌺  POOKALBOT — AUTONOMOUS ROBOT ORCHESTRATOR  🌺      
+=================================================================
+  🌐 Web Dashboard:   http://192.168.10.100:8000
+  🌐 mDNS Address:    http://pookal.local:8000
+  📷 Camera Stream:   http://192.168.10.100:8000/api/camera/stream
+  🤖 ESP32 Robot:     192.168.10.14 (Drive: 9000, TFT: 9001)
+  ⚡ AI Provider:     Cloudflare Workers AI (Active)
+=================================================================
+Step 4: Open the Web App in Your Browser
+On your laptop, tablet, or phone (connected to the same WiFi), open:
+
+👉 http://pookal.local:8000 (or http://<PI_IP>:8000)
+
+The 5-Step Workflow:
+Live Camera Button (Top Right):
+Click "📷 Live Camera" at any time to open a pop-up feed of the overhead camera.
+Step 1 — Prompt:
+Choose Petals (e.g., 6-fold), Colors (3), and Layers (2).
+Click Generate 
+→
+→ Cloudflare Workers AI generates 3 candidates in parallel.
+Step 2 — Select:
+Click your favorite pookalam candidate.
+Step 3 — Vectorize:
+OpenCV automatically extracts contours, generates the waypoints (
+x
+,
+y
+x,y cm), and shows the side-by-side traced path and estimated drawing time.
+Step 4 — Live View:
+View the live overhead camera with the gold path overlay on the floor.
+Step 5 — Send to Robot:
+Click Send to Robot to start physical drawing.
+6:36 AM

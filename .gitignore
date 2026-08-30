@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+.venv/
+venv/
+env/
+
+# Pytest
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Environment / secrets
+.env
+*.env
+.env.*
+
+# VS Code
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Output dirs (keep structure, ignore generated files)
+output/
+cv/debug/*.jpg
+cv/debug/*.png
+
+# Keep placeholder
+!cv/debug/.gitkeep
+!cv/samples/README.md

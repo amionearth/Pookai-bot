@@ -1,0 +1,21 @@
+# PookalBot — full stack dependencies
+# Install: pip install -r requirements.txt
+#
+# Server (FastAPI) + Gemini image gen + CV pipeline.
+# Hardware-side deps (ESP32 Arduino libs, py-evdev for mouse, pyserial)
+# are pulled in only when needed — see docs/protocol.md and pi/.
+
+# ── Web / API server ──────────────────────────────────────────────────────────
+fastapi>=0.110.0
+uvicorn[standard]>=0.27.0
+pydantic>=2.5.0
+
+# ── HTTP client (used by ai/gemini_client.py and server/routes/robot.py) ─────
+httpx>=0.27.0
+
+# ── Image validation (Pillow is optional but recommended) ────────────────────
+# If missing, ai/generator.py falls back to a no-op image check
+Pillow>=10.0.0
+
+# ── Computer-vision pipeline (cv/) ───────────────────────────────────────────
+-r requirements-cv.txt
